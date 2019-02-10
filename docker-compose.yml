@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+
+  terraform:
+    build: aws-stack
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      S3_BUCKET_NAME: "${S3_BUCKET_NAME}"
+      QUEUE_NAME: "${QUEUE_NAME}"
+    depends_on:
+      - etcd
+    restart: on-failure
+
+  mongo:
+    image: mongo:3.4
+    command: mongod --port 27017
+    ports:
+      - "27017:27017"
+
+  etcd:
+    image: quay.io/coreos/etcd
+    ports:
+      - "2379:2379"
+    command:
+      - /usr/local/bin/etcd
+      - -name
+      - etcd
+      - -initial-advertise-peer-urls
+      - http://etcd:2380
+      - -listen-client-urls
+      - http://0.0.0.0:2379
+      - -advertise-client-urls
+      - http://etcd:2379
+      - -listen-peer-urls
+      - http://0.0.0.0:2380
+      - -initial-cluster
+      - etcd=http://etcd:2380
+
+  api-rest:
+    build: app/api-rest
+#    ports:
+#      - "5000:5000"
+    environment:
+      SERVICE_DISCOVERY: etcd
+    restart: on-failure
+
+  worker:
+    build: app/worker
+    environment:
+      SERVICE_DISCOVERY: etcd
+      DB_NAME: mongo
+    restart: on-failure
+
+  frontend:
+    build: app/frontend
+    environment:
+      - NGINX_HOST=proxy
+      - NGINX_PROXY=api-rest:5000
+    ports:
+      - "80:80"
