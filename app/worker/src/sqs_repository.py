@@ -3,6 +3,7 @@ import boto3
 import os
 import etcd
 
+
 class WorkerSQSRepository:
 
     def __init__(self):

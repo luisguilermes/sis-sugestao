@@ -14,7 +14,6 @@ class Sugestao(Document):
 def worker():
     connect('sugestao_db', host=os.environ.get('DB_NAME'))
     sqs = WorkerSQSRepository()
-
     while 1:
         messages_to_delete = []
 
@@ -41,6 +40,7 @@ def worker():
             print(sugestao.email)
             cont+=1
         print("================ {} ".format(cont))
+
 
 if __name__ == '__main__':
     worker()

@@ -40,8 +40,8 @@ services:
 
   api-rest:
     build: app/api-rest
-#    ports:
-#      - "5000:5000"
+    ports:
+      - "5000:5000"
     environment:
       SERVICE_DISCOVERY: etcd
     restart: on-failure
@@ -52,11 +52,18 @@ services:
       SERVICE_DISCOVERY: etcd
       DB_NAME: mongo
     restart: on-failure
+#    ports:
+#      - "5000:5000"
 
   frontend:
     build: app/frontend
     environment:
       - NGINX_HOST=proxy
       - NGINX_PROXY=api-rest:5000
+    command:  /bin/sh -c "/wait-for api-rest:5000 -- nginx -g 'daemon off;'"
+    depends_on:
+      - api-rest
+      - worker
+    restart: on-failure
     ports:
       - "80:80"
