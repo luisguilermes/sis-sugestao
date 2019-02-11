@@ -8,6 +8,7 @@ api = SugestaoDto.api
 _sugestao = SugestaoDto.sugestao
 
 
+
 @api.route('')
 class SugestaoList(Resource):
     @api.response(201, 'Sugestao criada com sucesso.')

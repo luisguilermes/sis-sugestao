@@ -6,5 +6,5 @@ then
         exit
 fi
 
-python /app/run.py
+python manage.py
 

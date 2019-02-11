@@ -30,7 +30,7 @@ cd /terraform
 if [ $? -eq 0 ]
 then
     curl -s http://etcd:2379/v2/keys/sqs_id -XPUT -d value="$(terraform output sqs_id)"
-    curl -s http://etcd:2379/v2/keys/sqs_name -XPUT -d value="$(terraform output sqs_name)"
+#    curl -s http://etcd:2379/v2/keys/sqs_name -XPUT -d value="$(terraform output sqs_name)"
     curl -s http://etcd:2379/v2/keys/aws_access_key_id -XPUT --data-urlencode value="$AWS_ACCESS_KEY_ID"
     curl -s http://etcd:2379/v2/keys/aws_secret_access_key -XPUT --data-urlencode value="$AWS_SECRET_ACCESS_KEY"
 else
